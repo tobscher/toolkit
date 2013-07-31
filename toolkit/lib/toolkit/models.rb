@@ -1,6 +1,7 @@
 module Toolkit
   module Models
     autoload :Assignable, "toolkit/models/assignable"
+    autoload :Reportable, "toolkit/models/reportable"
 
     def self.config(mod, *accessors)
       class << mod; attr_accessor :available_configs; end
@@ -31,7 +32,7 @@ module Toolkit
       selected_modules = modules.map(&:to_sym).uniq
 
       selected_modules.each do |m|
-        mod = Toolkit::Models.const_get(m.to_s.classify)
+        mod = Toolkit::Models.const_get(m.to_s.classify) # || Doitsu::Models.const_get(m.to_s.classify)
 
         if mod.const_defined?("ClassMethods")
           class_mod = mod.const_get("ClassMethods")
@@ -49,7 +50,7 @@ module Toolkit
         include mod
       end
 
-      # options.each { |key, value| send(:"#{key}=", value) }
+      options.each { |key, value| send(:"#{key}=", value) }
     end
   end
 end
