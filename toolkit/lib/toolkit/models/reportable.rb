@@ -1,6 +1,7 @@
 module Toolkit
   module Models
     module Reportable
+      extend Toolkit::Configurable
       extend ActiveSupport::Concern
 
       included do

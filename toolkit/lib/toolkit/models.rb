@@ -1,30 +1,9 @@
 module Toolkit
   module Models
+    extend Toolkit::Configurable
+
     autoload :Assignable, "toolkit/models/assignable"
     autoload :Reportable, "toolkit/models/reportable"
-
-    def self.config(mod, *accessors)
-      class << mod; attr_accessor :available_configs; end
-      mod.available_configs = accessors
-
-      accessors.each do |accessor|
-        mod.class_eval <<-METHOD
-          def #{accessor}
-            if defined?(@#{accessor})
-              @#{accessor}
-            elsif superclass.respond_to?(:#{accessor})
-              superclass.#{accessor}
-            else
-              Toolkit.#{accessor}
-            end
-          end
-
-          def #{accessor}=(value)
-            @#{accessor} = value
-          end
-        METHOD
-      end
-    end
 
     def toolkit(*modules)
       options = modules.extract_options!.dup
@@ -32,7 +11,18 @@ module Toolkit
       selected_modules = modules.map(&:to_sym).uniq
 
       selected_modules.each do |m|
-        mod = Toolkit::Models.const_get(m.to_s.classify) # || Doitsu::Models.const_get(m.to_s.classify)
+        mod = nil
+        Toolkit.model_paths.each do |path|
+          namespace = path
+          klass = "#{namespace}/#{m.to_s}".classify
+          mod = klass.safe_constantize
+
+          p klass
+
+          break if mod
+        end
+
+        next unless mod
 
         if mod.const_defined?("ClassMethods")
           class_mod = mod.const_get("ClassMethods")
@@ -50,7 +40,7 @@ module Toolkit
         include mod
       end
 
-      options.each { |key, value| send(:"#{key}=", value) }
+      # options.each { |key, value| send(:"#{key}=", value) }
     end
   end
 end
