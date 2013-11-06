@@ -7,6 +7,13 @@ module Toolkit
 
   mattr_accessor :model_paths
   @@model_paths = ["toolkit/models"]
+
+  def self.configure
+    yield self
+  end
+
+  mattr_accessor :selected_features
+  @@selected_features = []
 end
 
 require "toolkit/configurable"

@@ -17,12 +17,14 @@ module Toolkit
           klass = "#{namespace}/#{m.to_s}".classify
           mod = klass.safe_constantize
 
-          p klass
-
           break if mod
         end
 
         next unless mod
+        unless check_requirements_for!(mod)
+          p "Feature `#{m}` could not be loaded. It does not meet all the requirements!"
+          next
+        end
 
         if mod.const_defined?("ClassMethods")
           class_mod = mod.const_get("ClassMethods")
@@ -38,9 +40,20 @@ module Toolkit
         end
 
         include mod
+
+        Toolkit.selected_features << m
       end
 
       # options.each { |key, value| send(:"#{key}=", value) }
+    end
+
+    def check_requirements_for!(mod)
+      if mod.const_defined?("Requirements")
+        req_mod = mod.const_get("Requirements")
+        req_mod.new.check
+      end
+
+      true
     end
   end
 end
