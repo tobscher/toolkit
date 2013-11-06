@@ -7,8 +7,8 @@ require "toolkit/version"
 Gem::Specification.new do |s|
   s.name        = "toolkit"
   s.version     = Toolkit::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
+  s.authors     = ["Tobias Haar"]
+  s.email       = ["tobias.haar@gmail.com"]
   s.homepage    = "TODO"
   s.summary     = "TODO: Summary of Toolkit."
   s.description = "TODO: Description of Toolkit."
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "rails", "~> 4.0.0"
+  s.add_dependency "rails", ">= 3.2.14"
 
   s.add_development_dependency "sqlite3"
 end

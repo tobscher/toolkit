@@ -1,27 +1,35 @@
 module Toolkit
   module Configurable
-    def config(mod, *accessors)
-      class << mod; attr_accessor :available_configs; end
-      mod.available_configs = accessors
+    extend ActiveSupport::Concern
 
-      klass = self.to_s.underscore.split('/')[0].classify
+    included do
+      Toolkit.model_paths.unshift(self.name.underscore)
+    end
 
-      accessors.each do |accessor|
-        mod.class_eval <<-METHOD
-          def #{accessor}
-            if defined?(@#{accessor})
-              @#{accessor}
-            elsif superclass.respond_to?(:#{accessor})
-              superclass.#{accessor}
-            else
-              #{klass.constantize}.#{accessor}
+    module ClassMethods
+      def config(mod, *accessors)
+        class << mod; attr_accessor :available_configs; end
+        mod.available_configs = accessors
+
+        klass = self.to_s.underscore.split('/')[0].classify
+
+        accessors.each do |accessor|
+          mod.class_eval <<-METHOD
+            def #{accessor}
+              if defined?(@#{accessor})
+                @#{accessor}
+              elsif superclass.respond_to?(:#{accessor})
+                superclass.#{accessor}
+              else
+                #{klass.constantize}.#{accessor}
+              end
             end
-          end
 
-          def #{accessor}=(value)
-            @#{accessor} = value
-          end
-METHOD
+            def #{accessor}=(value)
+              @#{accessor} = value
+            end
+  METHOD
+        end
       end
     end
   end

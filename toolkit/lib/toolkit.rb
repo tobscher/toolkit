@@ -6,7 +6,7 @@ module Toolkit
   @@reportable_options = { :burndown => true, :forecast => true }
 
   mattr_accessor :model_paths
-  @@model_paths = ["toolkit/models"]
+  @@model_paths = []
 end
 
 require "toolkit/configurable"

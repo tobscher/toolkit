@@ -1,3 +1,3 @@
 module Foo::Extensions
-  autoload :Models, "foo/extensions/models"
+  require "foo/extensions/models"
 end

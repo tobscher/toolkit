@@ -1,9 +1,6 @@
 module Toolkit
   module Models
-    extend Toolkit::Configurable
-
-    autoload :Assignable, "toolkit/models/assignable"
-    autoload :Reportable, "toolkit/models/reportable"
+    include Toolkit::Configurable
 
     def toolkit(*modules)
       options = modules.extract_options!.dup
@@ -16,8 +13,6 @@ module Toolkit
           namespace = path
           klass = "#{namespace}/#{m.to_s}".classify
           mod = klass.safe_constantize
-
-          p klass
 
           break if mod
         end
